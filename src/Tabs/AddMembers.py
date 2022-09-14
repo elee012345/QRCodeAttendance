@@ -6,8 +6,9 @@ from Tools.JSONTools import read_json, write_json
 
 
 class AddMembersTab(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, reload_member_list):
         super().__init__(parent)
+        self.reload_member_list = reload_member_list
 
         center = Frame(self, bg='black', width=100, height=200)
 
@@ -26,6 +27,7 @@ class AddMembersTab(ttk.Frame):
         self.generate_UI_components()
 
     def generate_UI_components(self):
+        # names
         name_label = Label(self.ctr_left, text="Full Name")
         name_label.pack(pady=(20, 5))
 
@@ -34,6 +36,17 @@ class AddMembersTab(ttk.Frame):
         name_entry.pack()
         name_entry.focus()
 
+        # teams
+        teams_label = Label(self.ctr_left, text="Team")
+        teams_label.pack(pady=(20, 5))
+
+        self.team_var = tk.StringVar()
+        ttk.Radiobutton(self.ctr_left, text='CAD', variable=self.team_var, value='cad').pack()
+        ttk.Radiobutton(self.ctr_left, text='Code', variable=self.team_var, value='code').pack()
+        ttk.Radiobutton(self.ctr_left, text='Mech', variable=self.team_var, value='mech').pack()
+        ttk.Radiobutton(self.ctr_left, text='Business', variable=self.team_var, value='business').pack()
+
+        # ids
         student_id_label = Label(self.ctr_left, text="Student ID")
         student_id_label.pack(pady=(20, 5))
 
@@ -60,11 +73,13 @@ class AddMembersTab(ttk.Frame):
     def submit_user(self, event=None):
         # Get Full Name and Graduating Year
         full_name = str(self.full_name_var.get())
+        team = str(self.team_var.get())
         student_id = str(self.student_id_var.get())
 
         # Update JSON
         file_data = read_json()
         file_data["members"].append({"ID": int(student_id),
+                                    "Team": team,
                                     "Name": full_name,
                                      "days-attended": {
 
@@ -78,8 +93,10 @@ class AddMembersTab(ttk.Frame):
         self.qr_display.delete('1.0', END)
 
         self.info_display.insert(tk.END, "Successfully added!\nName:\n" + full_name +
-                                 "\nID:\n" + student_id)
+                                 "\nID:\n" + student_id + "\nTeam:\n" + team)
         self.qr_display.insert(tk.END, text_QR_code(int(student_id)))
 
         self.info_display.configure(state='disable')
         self.qr_display.configure(state='disable')
+
+        self.reload_member_list()

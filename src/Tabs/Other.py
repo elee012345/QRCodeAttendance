@@ -7,8 +7,10 @@ from Scanner.Camera import Camera
 
 
 class OtherTab(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, reload_member_list):
         super().__init__(parent)
+
+        self.reload_member_list = reload_member_list
 
         self.generate_UI_components()
 
@@ -65,6 +67,7 @@ class OtherTab(ttk.Frame):
             title='Confirmation', message='Are you sure that you want reset the JSON?\nDoing this will delete all saved data unless it was exported.')
         if confirm:
             create_json(CONSTANT.defaultJSON)
+            self.reload_member_list()
             self.status_label.config(
                 text="Reset JSON file!")
 
@@ -77,5 +80,6 @@ class OtherTab(ttk.Frame):
                     'JSON File', '*.json')])
             if path != '':
                 write_json(read_json(filename=path))
+                self.reload_member_list()
                 self.status_label.config(
                     text="Imported JSON file!")

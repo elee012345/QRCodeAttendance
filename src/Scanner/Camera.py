@@ -2,7 +2,7 @@ import cv2
 import Constants as CONSTANT
 from pyzbar.pyzbar import decode
 from Tools.JSONTools import read_json, write_json
-from datetime import date
+from datetime import date, datetime
 from ast import Constant
 
 
@@ -39,7 +39,7 @@ class Camera:
                 recognizedFrame = frame.copy()
                 cv2.putText(recognizedFrame, msg, CONSTANT.bottomLeftCornerOfText,
                             CONSTANT.font, CONSTANT.fontScale, CONSTANT.fontColor, CONSTANT.thickness, CONSTANT.lineType)
-                cv2.imshow('poop', recognizedFrame)
+                cv2.imshow('scanned', recognizedFrame)
             cv2.imshow('Live Feed', frame)
             if cv2.waitKey(1) == ord('q'):
                 break
@@ -54,7 +54,7 @@ class Camera:
         if len(file_data["members"]) > 0:
             for member in file_data["members"]:
                 if self.date_string not in member["days-attended"]:
-                    member["days-attended"][self.date_string] = False
+                    member["days-attended"][self.date_string] = []
         write_json(file_data)
 
     def change_user_attendance(self, id_num):
@@ -63,6 +63,6 @@ class Camera:
         for member in file_data["members"]:
             if member["ID"] == id_num:
                 name = member["Name"]
-                member["days-attended"][self.date_string] = True
+                member["days-attended"][self.date_string].append(datetime.now().strftime("%H:%M:%S"))
         write_json(file_data)
         return name
