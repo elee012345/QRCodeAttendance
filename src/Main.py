@@ -13,7 +13,7 @@ class Main:
         # Checks if JSON exists, if not generates new JSON file
         if not exists(CONSTANT.pathToJSON):
             create_json(CONSTANT.defaultJSON)
-
+        
         root = tk.Tk()
         root.title('Admin Dashboard')
         root.geometry(str(CONSTANT.window_x)+"x"+str(CONSTANT.window_y))
@@ -23,8 +23,8 @@ class Main:
 
         manage_members = ManageMembersTab(tab_control)
         add_members = AddMembersTab(
-            tab_control)
-        other = OtherTab(tab_control)
+            tab_control, manage_members.reload_member_list)
+        other = OtherTab(tab_control, manage_members.reload_member_list)
 
         tab_control.add(manage_members, text='Manage Members')
         tab_control.add(add_members, text='Add Members')
